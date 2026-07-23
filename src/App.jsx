@@ -1,23 +1,29 @@
 import "./App.css";
-import MyFooter from "./components/MyFooter";
-import WelcomeNavbar from "./components/WelcomeNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import WelcomePage from "./pages/WelcomePage";
-import MenuUser from "./components/MenuUser";
+import Login from "./pages/Login";
+
+import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 function App() {
   return (
-    <div class="d-flex flex-column min-vh-100">
-      <header>
-        <WelcomeNavbar />
-      </header>
-      <main className="flex-grow-1">
-        <MenuUser />
-      </main>
-      <footer>
-        <MyFooter></MyFooter>
-      </footer>
-    </div>
+    <BrowserRouter>
+      <Routes>
+
+        <Route path="/" element={<WelcomePage />} />
+
+        <Route path="/login" element={<Login />} />
+
+        <Route path="/menu/*" element={<UserLayout />} />
+
+        <Route path="/menu-admin/*" element={<AdminLayout />} />
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 
