@@ -1,7 +1,7 @@
 import React from 'react';
 import { Nav, Button } from 'react-bootstrap';
 
-const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
+const SidebarUser = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
     const menuItems = [
         { id: 'profile', label: 'My Profile', icon: '👤' },
         { id: 'reg_client', label: 'Register New Client', icon: '➕🏢' },
@@ -13,7 +13,7 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
 
     return (
         <div 
-            className={`bg-dark text-white p-3 d-flex flex-column transition-all`}
+            className="bg-dark text-white p-3 d-flex flex-column"
             style={{ 
                 width: isCollapsed ? '80px' : '260px', 
                 minHeight: '100vh',
@@ -22,7 +22,7 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
         >
             {/* Toggle Button */}
             <div className="d-flex justify-content-between align-items-center mb-4">
-                {!isCollapsed && <h5 className="m-0 text-primary fw-bold">ADMIN MENU</h5>}
+                {!isCollapsed && <h5 className="m-0 text-info fw-bold">USER MENU</h5>}
                 <Button 
                     variant="outline-light" 
                     size="sm" 
@@ -40,7 +40,7 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
                 {menuItems.map((item) => (
                     <Button
                         key={item.id}
-                        variant={activeTab === item.id ? 'primary' : 'outline-dark'}
+                        variant={activeTab === item.id ? 'info' : 'outline-dark'}
                         className={`text-start d-flex align-items-center text-white ${activeTab === item.id ? 'fw-bold' : ''}`}
                         onClick={() => setActiveTab(item.id)}
                     >
@@ -53,4 +53,4 @@ const Sidebar = ({ activeTab, setActiveTab, isCollapsed, setIsCollapsed }) => {
     );
 };
 
-export default Sidebar;
+export default SidebarUser;

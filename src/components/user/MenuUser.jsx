@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Sidebar from './SidebarUser';
+import SidebarUser from './SidebarUser';
 import MyProfile from './MyProfile';
 import RegisterClient from './RegisterClient';
 import FindClient from './FindClient';
@@ -7,11 +7,11 @@ import FindInvoice from './FindInvoice';
 import RegisterInvoice from './RegisterInvoice';
 import ContactClient from './ContactClient';
 
-const AdminDashboard = () => {
+const MenuUser = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const [isCollapsed, setIsCollapsed] = useState(false);
 
-    
+    // Function to render the content based on the active tab
     const renderContent = () => {
         switch (activeTab) {
             case 'profile':
@@ -34,14 +34,14 @@ const AdminDashboard = () => {
     return (
         <div className="d-flex bg-light min-vh-100">
             {/* Sidebar Colapsable */}
-            <Sidebar 
+            <SidebarUser 
                 activeTab={activeTab} 
                 setActiveTab={setActiveTab} 
                 isCollapsed={isCollapsed} 
                 setIsCollapsed={setIsCollapsed} 
             />
 
-            {/* Area Grande Destra (Contenido Dinámico) */}
+            {/* Content Part  */}
             <div className="flex-grow-1 p-4 overflow-auto">
                 {renderContent()}
             </div>
@@ -49,4 +49,4 @@ const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default MenuUser;

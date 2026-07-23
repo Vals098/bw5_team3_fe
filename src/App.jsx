@@ -3,8 +3,7 @@ import MyFooter from "./components/MyFooter";
 import WelcomeNavbar from "./components/WelcomeNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import WelcomePage from "./pages/WelcomePage";
-import MenuUser from "./components/MenuUser";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 function App() {
   return (
     <div class="d-flex flex-column min-vh-100">
@@ -12,7 +11,7 @@ function App() {
         <WelcomeNavbar />
       </header>
       <main className="flex-grow-1">
-        <MenuUser />
+        <WelcomePage/>
       </main>
       <footer>
         <MyFooter></MyFooter>
