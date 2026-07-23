@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import Sidebar from './SidebarUser';
-import MyProfile from './MyProfile';
-import RegisterClient from './RegisterClient';
-import FindClient from './FindClient';
-import FindInvoice from './FindInvoice';
-import RegisterInvoice from './RegisterInvoice';
-import ContactClient from './ContactClient';
+import SidebarAdmin from './SidebarAdmin';
 
-const AdminDashboard = () => {
+// Componentes User 
+import MyProfile from '../user/MyProfile';
+import RegisterClient from '../user/RegisterClient';
+import FindClient from '../user/FindClient';
+import FindInvoice from '../user/FindInvoice';
+import RegisterInvoice from '../user/RegisterInvoice';
+import ContactClient from '../user/ContactClient';
+
+// Componentes Admin exclusivos
+import UpdateEmployeeInfo from './UpdateEmployeeInfo';
+import EditClientAdmin from './EditClientAdmin';
+import EditInvoiceAdmin from './EditInvoiceAdmin';
+
+const AdminMenu = () => {
     const [activeTab, setActiveTab] = useState('profile');
     const [isCollapsed, setIsCollapsed] = useState(false);
 
-    
     const renderContent = () => {
         switch (activeTab) {
             case 'profile':
@@ -26,6 +32,12 @@ const AdminDashboard = () => {
                 return <RegisterInvoice />;
             case 'contact_client':
                 return <ContactClient />;
+            case 'update_employee':
+                return <UpdateEmployeeInfo />;
+            case 'edit_client_admin':
+                return <EditClientAdmin />;
+            case 'edit_invoice_admin':
+                return <EditInvoiceAdmin />;
             default:
                 return <MyProfile />;
         }
@@ -33,15 +45,13 @@ const AdminDashboard = () => {
 
     return (
         <div className="d-flex bg-light min-vh-100">
-            {/* Sidebar Colapsable */}
-            <Sidebar 
+            <SidebarAdmin 
                 activeTab={activeTab} 
                 setActiveTab={setActiveTab} 
                 isCollapsed={isCollapsed} 
                 setIsCollapsed={setIsCollapsed} 
             />
 
-            {/* Area Grande Destra (Contenido Dinámico) */}
             <div className="flex-grow-1 p-4 overflow-auto">
                 {renderContent()}
             </div>
@@ -49,4 +59,4 @@ const AdminDashboard = () => {
     );
 };
 
-export default AdminDashboard;
+export default AdminMenu;
