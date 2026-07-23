@@ -3,6 +3,7 @@ import MyFooter from "./components/MyFooter";
 import WelcomeNavbar from "./components/WelcomeNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import WelcomePage from "./pages/WelcomePage";
+import MenuUser from "./components/MenuUser";
 
 function App() {
   return (
@@ -11,7 +12,7 @@ function App() {
         <WelcomeNavbar />
       </header>
       <main className="flex-grow-1">
-        <WelcomePage />
+        <MenuUser />
       </main>
       <footer>
         <MyFooter></MyFooter>
