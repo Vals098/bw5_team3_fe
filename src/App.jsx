@@ -2,7 +2,9 @@ import "./App.css";
 import MyFooter from "./components/MyFooter";
 import WelcomeNavbar from "./components/WelcomeNavbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import WelcomePage from "./pages/WelcomePage";
+import { Route, Routes } from "react-router-dom";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
 
 function App() {
   return (
@@ -11,7 +13,10 @@ function App() {
         <WelcomeNavbar />
       </header>
       <main className="flex-grow-1">
-        <WelcomePage />
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+        </Routes>
       </main>
       <footer>
         <MyFooter></MyFooter>
