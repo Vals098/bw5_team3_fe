@@ -7,6 +7,7 @@ const RegisterForm = function () {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [role, setRole] = useState([2]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -139,4 +140,3 @@ const RegisterForm = function () {
 };
 
 export default RegisterForm;
-
