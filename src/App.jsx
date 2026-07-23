@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Route, Routes } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import RegisterForm from "./components/RegisterForm";
-import MenuUser from "./components/MenuUser";
+import MenuUser from "./components/user/MenuUser";
 
 function App() {
   return (
@@ -18,6 +18,7 @@ function App() {
           <Route path="/" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="userDashboard" element={<MenuUser />} />
+          <Route path="/menu" element={<MenuUser />} />
         </Routes>
       </main>
       <footer>
