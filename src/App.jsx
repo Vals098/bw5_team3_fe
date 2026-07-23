@@ -1,29 +1,30 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import WelcomePage from "./pages/WelcomePage";
-import Login from "./pages/Login";
-
-import UserLayout from "./layouts/UserLayout";
-import AdminLayout from "./layouts/AdminLayout";
+import { Route, Routes } from "react-router-dom";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
+import MenuUser from "./components/user/MenuUser";
+import WelcomeNavbar from "./components/WelcomeNavbar"
+import MyFooter from "./components/MyFooter"
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-
-        <Route path="/" element={<WelcomePage />} />
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/menu/*" element={<UserLayout />} />
-
-        <Route path="/menu-admin/*" element={<AdminLayout />} />
-
-      </Routes>
-    </BrowserRouter>
+    <div class="d-flex flex-column min-vh-100">
+      <header>
+        <WelcomeNavbar />
+      </header>
+      <main className="flex-grow-1">
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
+          <Route path="userDashboard" element={<MenuUser />} />
+          <Route path="/menu" element={<MenuUser />} />
+        </Routes>
+      </main>
+      <footer>
+        <MyFooter></MyFooter>
+      </footer>
+    </div>
   );
 }
 
