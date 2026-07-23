@@ -17,8 +17,8 @@ function App() {
         <Routes>
           <Route path="/" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="userDashboard" element={<MenuUser />} />
         </Routes>
-        <MenuUser />
       </main>
       <footer>
         <MyFooter></MyFooter>
