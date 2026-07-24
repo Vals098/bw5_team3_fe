@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import FeedbackModal from "./modal/FeedbackModal";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = function () {
   const [username, setUsername] = useState("");
@@ -14,6 +15,8 @@ const RegisterForm = function () {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalVariant, setModalVariant] = useState("success");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,9 +48,15 @@ const RegisterForm = function () {
         return;
       }
 
-      setModalMessage("Registrazione avvenuta con successo!");
+      setModalMessage(
+        "Registrazione avvenuta con successo!  Verrai reindirizzato alla pagina di Login",
+      );
       setModalVariant("success");
       setShowModal(true);
+
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
 
       // reset del form
       setUsername("");
