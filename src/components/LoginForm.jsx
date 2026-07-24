@@ -43,7 +43,7 @@ const LoginForm = function () {
       setShowModal(true);
 
       setTimeout(() => {
-      navigate("/dashboard");  
+      navigate("/menu");  
       }, 3000);
 
       setEmail("");
