@@ -1,13 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Form,
-  Button,
-  Spinner,
-  Alert,
-  Row,
-  Col,
-} from "react-bootstrap";
+import React, { useState, useEffect } from "react"
+import { Card, Form, Button, Spinner, Alert, Row, Col } from "react-bootstrap"
 
 const MyProfile = () => {
   const [profile, setProfile] = useState({
@@ -17,13 +9,13 @@ const MyProfile = () => {
     email: "",
     username: "",
     roles: [],
-  });
+  })
 
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(true)
+  const [status, setStatus] = useState(null)
 
-  const token = localStorage.getItem("token");
-  const API_URL = "http://localhost:8080/employees/me";
+  const token = localStorage.getItem("token")
+  const API_URL = "http://localhost:8080/employees/me"
 
   useEffect(() => {
     fetch(API_URL, {
@@ -33,30 +25,56 @@ const MyProfile = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        setProfile(data);
-        setLoading(false);
+        console.log(data)
+        setProfile(data)
+        setLoading(false)
       })
-      .catch(() => setLoading(false));
-  }, []);
+      .catch(() => setLoading(false))
+  }, [])
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-    //  PUT
+    try {
+      const response = await fetch(API_URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: profile.name,
+          surname: profile.surname,
+          username: profile.username,
+          email: profile.email,
+        }),
+      })
 
-    setStatus({
-      type: "success",
-      msg: "Profile updated successfully.",
-    });
-  };
+      if (!response.ok) {
+        throw new Error("Error updating profile")
+      }
+
+      const updatedProfile = await response.json()
+      setProfile(updatedProfile)
+
+      setStatus({
+        type: "success",
+        msg: "Profile updated successfully.",
+      })
+    } catch (error) {
+      setStatus({
+        type: "danger",
+        msg: error.message,
+      })
+    }
+  }
 
   if (loading) {
     return (
       <div className="text-center mt-5">
         <Spinner animation="border" variant="primary" />
       </div>
-    );
+    )
   }
 
   return (
@@ -66,18 +84,11 @@ const MyProfile = () => {
       </Card.Header>
 
       <Card.Body>
-        {status && (
-          <Alert variant={status.type}>
-            {status.msg}
-          </Alert>
-        )}
+        {status && <Alert variant={status.type}>{status.msg}</Alert>}
 
         <div className="text-center mb-4">
           <img
-            src={
-              profile.avatar ||
-              "https://via.placeholder.com/150"
-            }
+            src={profile.avatar || "https://via.placeholder.com/150"}
             alt="Avatar"
             className="rounded-circle border"
             width={150}
@@ -85,9 +96,7 @@ const MyProfile = () => {
           />
 
           <div className="mt-3">
-            <Button variant="outline-primary">
-              Change Avatar
-            </Button>
+            <Button variant="outline-primary">Change Avatar</Button>
           </div>
         </div>
 
@@ -158,17 +167,13 @@ const MyProfile = () => {
             <Form.Label>Role</Form.Label>
             <Form.Control
               type="text"
-              value={profile.roles
-                ?.map((role) => role.role)
-                .join(", ")}
+              value={profile.roles?.map((role) => role.role).join(", ")}
               disabled
             />
           </Form.Group>
 
           <div className="d-flex justify-content-between">
-            <Button variant="outline-secondary">
-              Change Password
-            </Button>
+            <Button variant="outline-secondary">Change Password</Button>
 
             <Button type="submit" variant="primary">
               Save Changes
@@ -177,7 +182,7 @@ const MyProfile = () => {
         </Form>
       </Card.Body>
     </Card>
-  );
-};
+  )
+}
 
-export default MyProfile;
+export default MyProfile
