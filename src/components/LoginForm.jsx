@@ -51,7 +51,7 @@ const LoginForm = function () {
         } catch (error) {
           console.error("Errore nel recupero del profilo:", error);
         } finally {
-          const user = JSON.parse(localStorage.get("user"));
+          const user = JSON.parse(localStorage.getItem("user"));
           const isAdmin = user?.roles?.some((r) => r.role === "ADMIN");
           if (isAdmin) navigate("/admin-menu");
           else navigate("/menu");

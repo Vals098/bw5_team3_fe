@@ -35,7 +35,8 @@ const WelcomeNavbar = function () {
               <Nav.Link
                 onClick={() => {
                   navigate("/");
-                  localStorage.removeItem("token")
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
                 }}
               >
                 Logout
