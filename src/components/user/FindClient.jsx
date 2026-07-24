@@ -1,26 +1,41 @@
-import React, { useState } from "react";
-import { Card, Form, Table, Row, Col, Button, Alert } from "react-bootstrap";
+import React, { useState } from "react"
+import { Card, Form, Table, Row, Col, Button, Alert } from "react-bootstrap"
 
 const FindClient = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token")
 
-  const [filter, setFilter] = useState("legalName");
-  const [value, setValue] = useState("");
-  const [orderBy, setOrderBy] = useState("legalName");
+  const [legalName, setLegalName] = useState("")
+  const [yearlyIncome, setYearlyIncome] = useState("")
+  const [entryDate, setEntryDate] = useState("")
+  const [lastContactDate, setLastContactDate] = useState("")
 
-  const [clients, setClients] = useState([]);
-  const [message, setMessage] = useState(null);
+  const [orderBy, setOrderBy] = useState("legalName")
+
+  const [clients, setClients] = useState([])
+  const [message, setMessage] = useState(null)
 
   const handleSearch = async () => {
     try {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams()
 
-      params.append("page", 0);
-      params.append("size", 20);
-      params.append("orderBy", orderBy);
+      params.append("page", 0)
+      params.append("size", 20)
+      params.append("orderBy", orderBy)
 
-      if (value.trim() !== "") {
-        params.append(filter, value);
+      if (legalName !== "") {
+        params.append("legalName", legalName)
+      }
+
+      if (yearlyIncome !== "") {
+        params.append("yearlyIncome", yearlyIncome)
+      }
+
+      if (entryDate !== "") {
+        params.append("entryDate", entryDate)
+      }
+
+      if (lastContactDate !== "") {
+        params.append("lastContactDate", lastContactDate)
       }
 
       const response = await fetch(
@@ -29,23 +44,22 @@ const FindClient = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
+        },
+      )
 
       if (!response.ok) {
-        throw new Error("Unable to retrieve clients.");
+        throw new Error("Unable to retrieve clients.")
       }
 
-      const data = await response.json();
+      const data = await response.json()
 
-      setClients(data.content);
-      setMessage(null);
+      setClients(data.content)
+      setMessage(null)
     } catch (error) {
-      setClients([]);
-      setMessage(error.message);
+      setClients([])
+      setMessage(error.message)
     }
-  };
-
+  }
   return (
     <Card className="shadow-sm">
       <Card.Header as="h5" className="bg-secondary text-white">
@@ -55,74 +69,71 @@ const FindClient = () => {
       <Card.Body>
         {message && <Alert variant="danger">{message}</Alert>}
 
-        <Row className="mb-3">
-          {/* FILTER */}
+        <Row className="g-3 mb-4">
           <Col md={3}>
-            <Form.Select
-              value={filter}
-              onChange={(e) => {
-                setFilter(e.target.value);
-                setValue("");
-              }}
-            >
-              <option value="legalName">Legal Name</option>
-              <option value="yearlyIncome">Yearly Income</option>
-              <option value="entryDate">Entry Date</option>
-              <option value="lastContactDate">Last Contact Date</option>
-            </Form.Select>
-          </Col>
-
-          {/* VALUE */}
-          <Col md={3}>
-            {filter === "legalName" && (
+            <Form.Group>
+              <Form.Label>Legal Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Insert legal name..."
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
+                value={legalName}
+                onChange={(e) => setLegalName(e.target.value)}
               />
-            )}
+            </Form.Group>
+          </Col>
 
-            {filter === "yearlyIncome" && (
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Maximum Yearly Income</Form.Label>
               <Form.Control
                 type="number"
                 placeholder="Insert yearly income..."
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
+                value={yearlyIncome}
+                onChange={(e) => setYearlyIncome(e.target.value)}
               />
-            )}
+            </Form.Group>
+          </Col>
 
-            {(filter === "entryDate" ||
-              filter === "lastContactDate") && (
+          <Col md={3}>
+            <Form.Group>
+              <Form.Label>Entry Date</Form.Label>
               <Form.Control
                 type="date"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
+                value={entryDate}
+                onChange={(e) => setEntryDate(e.target.value)}
               />
-            )}
+            </Form.Group>
           </Col>
 
-          {/* SORT */}
           <Col md={3}>
-            <Form.Select
-              value={orderBy}
-              onChange={(e) => setOrderBy(e.target.value)}
-            >
-              <option value="legalName">Sort: Legal Name</option>
-              <option value="yearlyIncome">Sort: Yearly Income</option>
-              <option value="entryDate">Sort: Entry Date</option>
-              <option value="lastContactDate">Sort: Last Contact Date</option>
-              <option value="province">Sort: Province</option>
-            </Form.Select>
+            <Form.Group>
+              <Form.Label>Last Contact Date</Form.Label>
+              <Form.Control
+                type="date"
+                value={lastContactDate}
+                onChange={(e) => setLastContactDate(e.target.value)}
+              />
+            </Form.Group>
           </Col>
 
-          {/* SEARCH */}
-          <Col md={3}>
-            <Button
-              className="w-100"
-              variant="primary"
-              onClick={handleSearch}
-            >
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>Sort By</Form.Label>
+              <Form.Select
+                value={orderBy}
+                onChange={(e) => setOrderBy(e.target.value)}
+              >
+                <option value="legalName">Legal Name</option>
+                <option value="yearlyIncome">Yearly Income</option>
+                <option value="entryDate">Entry Date</option>
+                <option value="lastContactDate">Last Contact Date</option>
+                <option value="province">Province</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+
+          <Col md={6} className="d-flex align-items-end">
+            <Button className="w-100" variant="primary" onClick={handleSearch}>
               Search
             </Button>
           </Col>
@@ -161,7 +172,7 @@ const FindClient = () => {
         </Table>
       </Card.Body>
     </Card>
-  );
-};
+  )
+}
 
-export default FindClient;
+export default FindClient
