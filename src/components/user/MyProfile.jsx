@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react"
-import { Card, Form, Button, Spinner, Alert, Row, Col } from "react-bootstrap"
+import {
+  Card,
+  Form,
+  Button,
+  Spinner,
+  Alert,
+  Row,
+  Col,
+  Modal,
+} from "react-bootstrap"
 
 const MyProfile = () => {
   const [profile, setProfile] = useState({
@@ -13,6 +22,14 @@ const MyProfile = () => {
 
   const [loading, setLoading] = useState(true)
   const [status, setStatus] = useState(null)
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [passwordStatus, setPasswordStatus] = useState(null)
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+  })
 
   const token = localStorage.getItem("token")
   const API_URL = "http://localhost:8080/employees/me"
@@ -51,7 +68,12 @@ const MyProfile = () => {
       })
 
       if (!response.ok) {
-        throw new Error("Error updating profile")
+        const error = await response.json()
+
+        throw {
+          message: error.message,
+          errors: error.errors,
+        }
       }
 
       const updatedProfile = await response.json()
@@ -64,7 +86,48 @@ const MyProfile = () => {
     } catch (error) {
       setStatus({
         type: "danger",
-        msg: error.message,
+        msg: error.errors ?? [error.message],
+      })
+    }
+  }
+
+  const handlePasswordChange = async () => {
+    try {
+      const response = await fetch(`${API_URL}/password`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(passwordData),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+
+        throw {
+          message: error.message,
+          errors: error.errors,
+        }
+      }
+
+      const result = await response.json()
+
+      setPasswordStatus({
+        type: "success",
+        msg: result.message,
+      })
+
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+      })
+
+      setShowPasswordModal(false)
+    } catch (error) {
+      setPasswordStatus({
+        type: "danger",
+        msg: error.errors ?? [error.message],
       })
     }
   }
@@ -78,110 +141,184 @@ const MyProfile = () => {
   }
 
   return (
-    <Card className="shadow-sm">
-      <Card.Header as="h5" className="bg-primary text-white">
-        MY PROFILE
-      </Card.Header>
+    <>
+      <Card className="shadow-sm">
+        <Card.Header as="h5" className="bg-primary text-white">
+          MY PROFILE
+        </Card.Header>
 
-      <Card.Body>
-        {status && <Alert variant={status.type}>{status.msg}</Alert>}
+        <Card.Body>
+          {status && (
+            <Alert variant={status.type}>
+              {Array.isArray(status.msg)
+                ? status.msg.map((err, index) => <div key={index}>• {err}</div>)
+                : status.msg}
+            </Alert>
+          )}
 
-        <div className="text-center mb-4">
-          <img
-            src={profile.avatar || "https://via.placeholder.com/150"}
-            alt="Avatar"
-            className="rounded-circle border"
-            width={150}
-            height={150}
-          />
+          <div className="text-center mb-4">
+            <img
+              src={profile.avatar || "https://via.placeholder.com/150"}
+              alt="Avatar"
+              className="rounded-circle border"
+              width={150}
+              height={150}
+            />
 
-          <div className="mt-3">
-            <Button variant="outline-primary">Change Avatar</Button>
+            <div className="mt-3">
+              <Button variant="outline-primary">Change Avatar</Button>
+            </div>
           </div>
-        </div>
 
-        <Form onSubmit={handleSubmit}>
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={profile.name}
-                  onChange={(e) =>
-                    setProfile({
-                      ...profile,
-                      name: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-            </Col>
+          <Form onSubmit={handleSubmit}>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={profile.name}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        name: e.target.value,
+                      })
+                    }
+                  />
+                </Form.Group>
+              </Col>
 
-            <Col md={6}>
-              <Form.Group className="mb-3">
-                <Form.Label>Surname</Form.Label>
-                <Form.Control
-                  type="text"
-                  value={profile.surname}
-                  onChange={(e) =>
-                    setProfile({
-                      ...profile,
-                      surname: e.target.value,
-                    })
-                  }
-                />
-              </Form.Group>
-            </Col>
-          </Row>
+              <Col md={6}>
+                <Form.Group className="mb-3">
+                  <Form.Label>Surname</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={profile.surname}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        surname: e.target.value,
+                      })
+                    }
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={profile.username}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    username: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={profile.email}
+                onChange={(e) =>
+                  setProfile({
+                    ...profile,
+                    email: e.target.value,
+                  })
+                }
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label>Role</Form.Label>
+              <Form.Control
+                type="text"
+                value={profile.roles?.map((role) => role.role).join(", ")}
+                disabled
+              />
+            </Form.Group>
+
+            <div className="d-flex justify-content-between">
+              <Button
+                type="button"
+                variant="outline-secondary"
+                onClick={() => setShowPasswordModal(true)}
+              >
+                Change Password
+              </Button>
+
+              <Button type="submit" variant="primary">
+                Save Changes
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      <Modal
+        show={showPasswordModal}
+        onHide={() => setShowPasswordModal(false)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Change Password</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+           {passwordStatus && (
+            <Alert variant={passwordStatus.type}>
+              {Array.isArray(passwordStatus.msg)
+                ? passwordStatus.msg.map((err, index) => <div key={index}>• {err}</div>)
+                : passwordStatus.msg}
+            </Alert>
+          )}
 
           <Form.Group className="mb-3">
-            <Form.Label>Username</Form.Label>
+            <Form.Label>Current Password</Form.Label>
             <Form.Control
-              type="text"
-              value={profile.username}
+              type="password"
+              value={passwordData.currentPassword}
               onChange={(e) =>
-                setProfile({
-                  ...profile,
-                  username: e.target.value,
+                setPasswordData({
+                  ...passwordData,
+                  currentPassword: e.target.value,
                 })
               }
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
+          <Form.Group>
+            <Form.Label>New Password</Form.Label>
             <Form.Control
-              type="email"
-              value={profile.email}
+              type="password"
+              value={passwordData.newPassword}
               onChange={(e) =>
-                setProfile({
-                  ...profile,
-                  email: e.target.value,
+                setPasswordData({
+                  ...passwordData,
+                  newPassword: e.target.value,
                 })
               }
             />
           </Form.Group>
+        </Modal.Body>
 
-          <Form.Group className="mb-4">
-            <Form.Label>Role</Form.Label>
-            <Form.Control
-              type="text"
-              value={profile.roles?.map((role) => role.role).join(", ")}
-              disabled
-            />
-          </Form.Group>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => setShowPasswordModal(false)}
+          >
+            Cancel
+          </Button>
 
-          <div className="d-flex justify-content-between">
-            <Button variant="outline-secondary">Change Password</Button>
-
-            <Button type="submit" variant="primary">
-              Save Changes
-            </Button>
-          </div>
-        </Form>
-      </Card.Body>
-    </Card>
+          <Button variant="primary" onClick={handlePasswordChange}>
+            Save Password
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   )
 }
 
