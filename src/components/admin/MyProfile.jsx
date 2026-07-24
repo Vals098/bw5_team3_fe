@@ -25,7 +25,6 @@ const MyProfile = () => {
 
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [passwordStatus, setPasswordStatus] = useState(null)
-
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -132,6 +131,53 @@ const MyProfile = () => {
     }
   }
 
+  const handleAvatarUpload = async (file) => {
+    const formData = new FormData()
+    formData.append("avatar", file)
+
+    try {
+      const response = await fetch(`${API_URL}/avatar`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+
+        throw {
+          message: error.message,
+          errors: error.errors,
+        }
+      }
+
+      const result = await response.json()
+
+      // ricarico il profilo per mostrare subito la nuova immagine
+      const profileResponse = await fetch(API_URL, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const updatedProfile = await profileResponse.json()
+
+      setProfile(updatedProfile)
+
+      setStatus({
+        type: "success",
+        msg: result.message,
+      })
+    } catch (error) {
+      setStatus({
+        type: "danger",
+        msg: error.errors ?? [error.message],
+      })
+    }
+  }
+
   if (loading) {
     return (
       <div className="text-center mt-5">
@@ -166,8 +212,29 @@ const MyProfile = () => {
             />
 
             <div className="mt-3">
-              <Button variant="outline-primary">Change Avatar</Button>
+              <Button
+                variant="outline-primary"
+                onClick={() => document.getElementById("avatarInput").click()}
+              >
+                Change Avatar
+              </Button>
             </div>
+            <Form.Control
+              type="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              id="avatarInput"
+              onChange={(e) => {
+                const file = e.target.files[0]
+
+                if (file) {
+                  handleAvatarUpload(file)
+                }
+
+                // permette di selezionare di nuovo lo stesso file
+                e.target.value = ""
+              }}
+            />
           </div>
 
           <Form onSubmit={handleSubmit}>
@@ -268,10 +335,12 @@ const MyProfile = () => {
         </Modal.Header>
 
         <Modal.Body>
-           {passwordStatus && (
+          {passwordStatus && (
             <Alert variant={passwordStatus.type}>
               {Array.isArray(passwordStatus.msg)
-                ? passwordStatus.msg.map((err, index) => <div key={index}>• {err}</div>)
+                ? passwordStatus.msg.map((err, index) => (
+                    <div key={index}>• {err}</div>
+                  ))
                 : passwordStatus.msg}
             </Alert>
           )}
