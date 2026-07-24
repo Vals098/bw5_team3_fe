@@ -35,16 +35,28 @@ const LoginForm = function () {
       }
 
       const token = await response.text();
-      console.log(token);
       localStorage.setItem("token", token);
 
       setModalMessage("Login avvenuto con successo!");
       setModalVariant("success");
       setShowModal(true);
 
-      setTimeout(() => {
-      navigate("/menu");  
-      }, 3000);
+      setTimeout(async () => {
+        try {
+          const response = await fetch("http://localhost:8080/employees/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const userData = await response.json();
+          localStorage.setItem("user", JSON.stringify(userData));
+        } catch (error) {
+          console.error("Errore nel recupero del profilo:", error);
+        } finally {
+          const user = JSON.parse(localStorage.get("user"));
+          const isAdmin = user?.roles?.some((r) => r.role === "ADMIN");
+          if (isAdmin) navigate("/admin-menu");
+          else navigate("/menu");
+        }
+      }, 2000);
 
       setEmail("");
       setPassword("");
